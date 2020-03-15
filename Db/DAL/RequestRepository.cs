@@ -15,6 +15,11 @@ namespace GeoSystem.Db.DAO
             return Get(id)?.Brigade;
         }
 
+        public List<Request> GetAllWithBrigade() 
+        {
+            return GetTable().Include("Brigade").ToList();
+        }
+
         protected override DbSet<Request> GetTable()
         {
             return (GeoSystemContext as GeoSystemContext).request;

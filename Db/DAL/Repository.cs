@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 
 namespace GeoSystem.Db.DAO
@@ -43,7 +44,8 @@ namespace GeoSystem.Db.DAO
 
         public void Update(T item)
         {
-            GeoSystemContext.Entry(item).State = EntityState.Modified;
+            //GeoSystemContext.Entry(item).State = EntityState.Modified;
+            GetTable().AddOrUpdate(item);
         }
 
         private bool disposed = false;

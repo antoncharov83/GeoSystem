@@ -11,5 +11,7 @@ namespace GeoSystem.Db.DAL
     public interface IRequestRepository : IRepository<Request>
     {
         Brigade GetBrigade(int id);
+
+        List<Request> GetAllWithBrigade();
     }
 }

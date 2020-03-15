@@ -18,6 +18,9 @@
             .ID("GridPanelRequest")
             .Store(
                 Html.X().StoreForModel().ID("StoreRequest")
+                .AutoSync(true)
+                    .ShowWarningOnFailure(false)                    
+                    .SyncUrl(Url.Action("RequestHandleChanges"))
             )
             .Icon(Icon.Table)
             .Frame(true)
@@ -25,12 +28,7 @@
             .Height(430)
             .Width(500)
             .StyleSpec("margin-top: 10px;")
-            .ColumnModel(
-                Html.X().ColumnFor(Model, m => m.BrigadeID)
-                    .ToBuilder<Column.Builder>()
-                    .Width(40)
-                    .Renderer("return record.phantom ? '' : value;"),
-
+            .ColumnModel(                
                 Html.X().ColumnFor(Model, m => m.RequestName)
                     .ToBuilder<Column.Builder>()
                     .Flex(1)
@@ -45,7 +43,7 @@
                         Html.X().TextField().AllowBlank(false)
                     ),
 
-                Html.X().ColumnFor(Model, m => m.Brigade)
+                Html.X().ColumnFor(Model, m => m.Brigade.BrigadeName)
                     .ToBuilder<Column.Builder>()
                     .Flex(1)
                     .Editor(
@@ -56,5 +54,8 @@
                         .ValueField("id")
                         .DisplayField("name")
                     )
-                )
+            )
+            .Plugins(
+                Html.X().CellEditing()
+            )
 )

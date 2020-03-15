@@ -53,7 +53,7 @@ namespace GeoSystem.Controllers
         [ChildActionOnly]
         public ActionResult ShowAllRequests()
         {
-            IEnumerable<Request> list = requestRepository.GetAll();
+            IEnumerable<Request> list = requestRepository.GetAllWithBrigade();
             return PartialView("RequestsGrid", list);
         }
 
@@ -75,7 +75,37 @@ namespace GeoSystem.Controllers
             return PartialView("Statistics", model);
         }
 
-        public ActionResult HandleChanges(StoreDataHandler handler)
+        public ActionResult BrigadeHandleChanges(StoreDataHandler handler)
+        {
+            List<Brigade> items = handler.ObjectData<Brigade>();
+            string errorMessage = null;
+
+            if (handler.Action == StoreAction.Update)
+            {
+                items.ForEach(i =>
+                {
+                    brigadeRepository.Update(i);
+                });
+            }
+
+            try
+            {
+                brigadeRepository.Save();
+            }
+            catch (Exception e)
+            {
+                errorMessage = e.Message;
+            }
+
+            if (errorMessage != null)
+            {
+                return this.Store(errorMessage);
+            }
+
+            return handler.Action == StoreAction.Update ? (ActionResult)this.Store(items) : (ActionResult)this.Content(""); ;
+        }
+
+        public ActionResult RequestHandleChanges(StoreDataHandler handler)
         {
             List<Request> requests = handler.ObjectData<Request>();
             string errorMessage = null;
@@ -105,20 +135,8 @@ namespace GeoSystem.Controllers
 
             return handler.Action == StoreAction.Update ? (ActionResult)this.Store(requests) : (ActionResult)this.Content(""); ;
         }
-            //public ActionResult CreateBrigade()
-            //{
-            //    Brigade viewModel = new Brigade();
-            //    return this.View("Index", viewModel);
-            //}
 
-            //public ActionResult CreateRequest()
-            //{
-            //    FormPanelRequest viewModel = new FormPanelRequest();
-            //    viewModel.request = new Request();
-            //    return this.View("Index", viewModel);
-            //}
-
-            public ActionResult SubmitBrigade(Brigade brigade)
+        public ActionResult SubmitBrigade(Brigade brigade)
         {
             brigadeRepository.Create(brigade);
             try
