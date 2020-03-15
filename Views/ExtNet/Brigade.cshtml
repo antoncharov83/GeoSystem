@@ -1,0 +1,13 @@
+﻿@model GeoSystem.Models.Brigade
+
+@(Html.X().FormPanelFor(m => m)
+            .ID("BrigadePanel")
+            .X(10).Y(10)
+                .BodyPadding(5)
+                .DefaultAnchor("100%")
+                .Width(300)
+                .Buttons(Html.X().Button()
+                    .Text("Сохранить")
+                    .DirectClickUrl(Url.Action("SubmitBrigade"))
+                )
+)

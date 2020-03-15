@@ -1,0 +1,28 @@
+﻿@model IEnumerable<GeoSystem.Models.Brigade>
+
+
+@(Html.X().GridPanel()
+            .ID("GridPanel1")
+            .Store(
+                Html.X().StoreForModel().ID("Store1")
+            )
+            .Icon(Icon.Table)
+            .Frame(true)
+            .Title("Бригады")
+            .Height(430)
+            .Width(500)
+            .StyleSpec("margin-top: 10px;")
+            .ColumnModel(
+                Html.X().ColumnFor(Model, m => m.BrigadeID)                    
+                    .ToBuilder<Column.Builder>()
+                    .Width(40)
+                    .Renderer("return record.phantom ? '' : value;"),
+
+                Html.X().ColumnFor(Model, m => m.BrigadeName)
+                    .ToBuilder<Column.Builder>()
+                    .Flex(1)
+                    .Editor(
+                        Html.X().TextField().AllowBlank(false)
+                    )
+                )
+)

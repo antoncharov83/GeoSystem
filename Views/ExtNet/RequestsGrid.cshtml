@@ -1,0 +1,62 @@
+﻿@using GeoSystem.Db.ViewModel;
+
+@model IEnumerable<GeoSystem.Models.Request>
+
+@(Html.X().Store()
+            .ID("BrigadeStore")
+            .Model(Html.X().Model()
+                .Fields(
+                    new ModelField("id", ModelFieldType.Int) { Mapping = "BrigadeID" },
+                    new ModelField("name", ModelFieldType.String) { Mapping = "BrigadeName" }
+                )
+            )
+            .Proxy(Html.X().AjaxProxy()
+                .Url(Url.Action("GetBrigades"))
+                .Reader(Html.X().JsonReader().RootProperty("data"))
+            )
+)
+
+@(Html.X().GridPanel()
+            .ID("GridPanel1")
+            .Store(
+                Html.X().StoreForModel().ID("Store1")
+            )
+            .Icon(Icon.Table)
+            .Frame(true)
+            .Title("Бригады")
+            .Height(430)
+            .Width(500)
+            .StyleSpec("margin-top: 10px;")
+            .ColumnModel(
+                Html.X().ColumnFor(Model, m => m.RequestID)
+                    .ToBuilder<Column.Builder>()
+                    .Width(40)
+                    .Renderer("return record.phantom ? '' : value;"),
+
+                Html.X().ColumnFor(Model, m => m.RequestName)
+                    .ToBuilder<Column.Builder>()
+                    .Flex(1)
+                    .Editor(
+                        Html.X().TextField().AllowBlank(false)
+                    ),
+
+                Html.X().ColumnFor(Model, m => m.Start)
+                    .ToBuilder<Column.Builder>()
+                    .Flex(1)
+                    .Editor(
+                        Html.X().TextField().AllowBlank(false)
+                    ),
+
+                Html.X().ColumnFor(Model, m => m.Brigade)
+                    .ToBuilder<Column.Builder>()
+                    .Flex(1)
+                    .Editor(
+                        Html.X().ComboBox()
+                        .QueryMode(DataLoadMode.Remote)
+                        .TriggerAction(TriggerAction.All)
+                        .StoreID("BrigadeStore")
+                        .ValueField("id")
+                        .DisplayField("name")
+                    )
+                )
+)

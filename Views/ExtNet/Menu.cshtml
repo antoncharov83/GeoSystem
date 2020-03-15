@@ -1,0 +1,16 @@
+﻿@(Html.X().Container()
+        .Layout(LayoutType.Form)
+        .Items(
+            Html.X().FieldContainer()
+                .FieldLabel("Зарегистрировать")
+                .Items(
+                    Html.X().SegmentedButton()
+                        .Items(
+                            Html.X().Button().Text("Бригада")
+                            .DirectClickUrl(Url.Action("CreateBrigade")),
+                            Html.X().Button().Text("Заявка")
+                            .DirectClickUrl(Url.Action("CreateRequest"))
+                        )
+                )
+                )
+)

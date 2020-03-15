@@ -1,0 +1,21 @@
+﻿@using Ext.Net;
+@using Ext.Net.Utilities;
+
+@model GeoSystem.Models.Brigade
+@{
+    ViewBag.Title = "Бригада";
+}
+
+@*@section BrigadeForm
+{
+    @(
+        Ext.Net.Html.X().FormPanelFor(m => m)
+                .BodyPadding(5)
+                .DefaultAnchor("100%")
+                .Width(300)
+                .Buttons(Html.X().Button()
+                    .Text("Сохранить")
+                    .DirectClickUrl(Url.Action("Submit"))
+                )
+    )
+}*@

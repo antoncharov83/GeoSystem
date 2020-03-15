@@ -1,0 +1,23 @@
+﻿@model System.Collections.IEnumerable
+
+@(Html.X().GridPanel()
+        .Title("Статистика")
+        .Width(600)
+        .Height(350)
+        .Store(Html.X().Store()
+            .DataSource(Model)
+            .Model(Html.X().Model()
+                .Fields(
+                    new ModelField("brigade"),
+                    new ModelField("count", ModelFieldType.Int),
+                    new ModelField("countDays", ModelFieldType.Float)
+                )
+            )
+            .DataSource(Model)
+        )
+        .ColumnModel(
+            Html.X().Column().Text("Бригада").DataIndex("brigade").Flex(1),
+            Html.X().Column().Text("Количество заявок").DataIndex("count"),
+            Html.X().Column().Text("Сумма дней").DataIndex("countDays")
+        )
+)

@@ -1,0 +1,15 @@
+﻿@using GeoSystem.Db.ViewModel;
+@using GeoSystem.Models
+@model Brigade
+
+@(
+    Html.X()
+    .ComboBoxFor(m => m.BrigadeID)
+        .Items(FormPanelRequest.getBrigades().Select(d => new ListItem(d.BrigadeName, d.BrigadeID)))
+        .Editable(false)
+        .FieldLabel("Brigade")
+        .SimpleSubmit(true)
+        .Listeners(l => {
+            l.Select.Handler = "this.next().setValue(this.getRawValue());";
+        })
+)

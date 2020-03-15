@@ -1,0 +1,43 @@
+@using Ext.Net;
+@using Ext.Net.MVC;
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>GeoSystem</title>
+
+    <link type="text/css" rel="stylesheet" href="https://speed.ext.net/www/intro/css/main.css" />
+</head>
+<body>
+    @(Html.X().ResourceManager())
+    <table cellspacing="5" cellpadding="10">
+        <tr>
+            <td>
+                @*@Html.Action("NewBrigade")
+
+                @Html.Action("NewRequest")*@
+            </td>
+            <td>
+                @*@Html.Action("ShowAllBrigades")*@
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @Html.Action("ShowAllRequests")
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @Html.Action("getStatistics")
+            </td>
+        </tr>
+    </table>
+                @*@Html.Action("Menu")*@
+
+</body>
+</html>
