@@ -6,7 +6,6 @@ using System.Web.Mvc;
 using Ext.Net;
 using Ext.Net.MVC;
 using GeoSystem.Db.DAL;
-using GeoSystem.Db.DAO;
 using GeoSystem.Db.ViewModel;
 using GeoSystem.Models;
 
@@ -27,20 +26,20 @@ namespace GeoSystem.Controllers
         {
             return View();
         }
-
+        [ChildActionOnly]
         public ActionResult NewBrigade()
         {
             Brigade brigade = new Brigade();
             return PartialView("Brigade", brigade);
         }
-
+        [ChildActionOnly]
         public ActionResult NewRequest()
         {
             FormPanelRequest viewModel = new FormPanelRequest();
             viewModel.request = new Request();
             return PartialView("Request", viewModel);
         }
-
+        [ChildActionOnly]
         public ActionResult Menu()
         {
             return PartialView("Menu");
@@ -62,7 +61,7 @@ namespace GeoSystem.Controllers
         {
             return this.Store(brigadeRepository.GetAll());
         }
-
+        [ChildActionOnly]
         public ActionResult getStatistics() {
             var model = requestRepository.GetAll()
                 .Where(r => r.End > DateTime.Now.AddDays(-30))
@@ -76,20 +75,50 @@ namespace GeoSystem.Controllers
             return PartialView("Statistics", model);
         }
 
-        public ActionResult CreateBrigade()
+        public ActionResult HandleChanges(StoreDataHandler handler)
         {
-            Brigade viewModel = new Brigade();
-            return this.View("Index", viewModel);
-        }
+            List<Request> requests = handler.ObjectData<Request>();
+            string errorMessage = null;
 
-        public ActionResult CreateRequest()
-        {
-            FormPanelRequest viewModel = new FormPanelRequest();
-            viewModel.request = new Request();
-            return this.View("Index", viewModel);
-        }
+            if (handler.Action == StoreAction.Update)
+            {
+                requests.ForEach(r => 
+                {
+                    r.BrigadeID = r.Brigade.BrigadeID;
+                    requestRepository.Update(r);
+                });
+            }
+            
+            try
+            {
+                requestRepository.Save();
+            }
+            catch (Exception e)
+            {
+                errorMessage = e.Message;
+            }
 
-        public ActionResult SubmitBrigade(Brigade brigade)
+            if (errorMessage != null)
+            {
+                return this.Store(errorMessage);
+            }
+
+            return handler.Action == StoreAction.Update ? (ActionResult)this.Store(requests) : (ActionResult)this.Content(""); ;
+        }
+            //public ActionResult CreateBrigade()
+            //{
+            //    Brigade viewModel = new Brigade();
+            //    return this.View("Index", viewModel);
+            //}
+
+            //public ActionResult CreateRequest()
+            //{
+            //    FormPanelRequest viewModel = new FormPanelRequest();
+            //    viewModel.request = new Request();
+            //    return this.View("Index", viewModel);
+            //}
+
+            public ActionResult SubmitBrigade(Brigade brigade)
         {
             brigadeRepository.Create(brigade);
             try

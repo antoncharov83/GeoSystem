@@ -15,29 +15,28 @@
 </head>
 <body>
     @(Html.X().ResourceManager())
+    
     <table cellspacing="5" cellpadding="10">
         <tr>
             <td>
-                @*@Html.Action("NewBrigade")
+                @Html.Action("NewBrigade")
 
-                @Html.Action("NewRequest")*@
+                @Html.Action("NewRequest")
             </td>
             <td>
-                @*@Html.Action("ShowAllBrigades")*@
+                @Html.Action("ShowAllBrigades")
             </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                @Html.Action("ShowAllRequests")
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
+            <td>
                 @Html.Action("getStatistics")
             </td>
         </tr>
+        <tr>
+            <td colspan="3">
+                @Html.Action("ShowAllRequests")
+            </td>
+        </tr>
     </table>
-                @*@Html.Action("Menu")*@
+    @*@Html.Action("Menu")*@
 
 </body>
 </html>

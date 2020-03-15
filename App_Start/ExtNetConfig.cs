@@ -20,7 +20,7 @@ namespace GeoSystem
             // Add https://example.com/extnet/ Route
             routes.MapRoute(
                 "ExtNet", // Route name
-                "extnet/{action}/{id}", // URL with parameters
+                "{action}/{id}", // URL with parameters
                 new { controller = "ExtNet", action = "Index", id = UrlParameter.Optional } // Parameter defaults
             );
         }

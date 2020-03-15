@@ -1,6 +1,4 @@
-﻿@using GeoSystem.Db.ViewModel;
-
-@model IEnumerable<GeoSystem.Models.Request>
+﻿@model IEnumerable<GeoSystem.Models.Request>
 
 @(Html.X().Store()
             .ID("BrigadeStore")
@@ -17,18 +15,18 @@
 )
 
 @(Html.X().GridPanel()
-            .ID("GridPanel1")
+            .ID("GridPanelRequest")
             .Store(
-                Html.X().StoreForModel().ID("Store1")
+                Html.X().StoreForModel().ID("StoreRequest")
             )
             .Icon(Icon.Table)
             .Frame(true)
-            .Title("Бригады")
+            .Title("Заявки")
             .Height(430)
             .Width(500)
             .StyleSpec("margin-top: 10px;")
             .ColumnModel(
-                Html.X().ColumnFor(Model, m => m.RequestID)
+                Html.X().ColumnFor(Model, m => m.BrigadeID)
                     .ToBuilder<Column.Builder>()
                     .Width(40)
                     .Renderer("return record.phantom ? '' : value;"),
