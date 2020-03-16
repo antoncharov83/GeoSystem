@@ -26,6 +26,7 @@ namespace GeoSystem.Controllers
         {
             return View();
         }
+
         [ChildActionOnly]
         public ActionResult NewBrigade()
         {
@@ -65,10 +66,10 @@ namespace GeoSystem.Controllers
         public ActionResult getStatistics() {
             var model = requestRepository.GetAll()
                 .Where(r => r.End > DateTime.Now.AddDays(-30))
-                .GroupBy(r => r.BrigadeID)
+                .GroupBy(r => r.Brigade)
                 .Select(r => new object[]
                 {
-                    r.First().Brigade.BrigadeName,
+                    r.First().Brigade?.BrigadeName,
                     r.Count(),
                     r.Sum(d => (d.End - d.Start).TotalDays)
                 }).ToArray();
@@ -114,7 +115,6 @@ namespace GeoSystem.Controllers
             {
                 requests.ForEach(r => 
                 {
-                    r.BrigadeID = r.Brigade.BrigadeID;
                     requestRepository.Update(r);
                 });
             }
@@ -158,27 +158,26 @@ namespace GeoSystem.Controllers
                 X.Msg.Notify(new NotificationConfig
                 {
                     Icon = Icon.Accept,
-                    Title = "Errors",
+                    Title = "Ошибка!",
                     Html = msg
                 }).Show();
 
-                ViewBag.regime = 1;
                 return View("Index");
             }
-            X.Msg.Notify(new NotificationConfig
-            {
-                Icon = Icon.Accept,
-                Title = "Сохранение",
-                Html = brigade.BrigadeName + " добавлена"
-            }).Show();
+            //X.Msg.Notify(new NotificationConfig
+            //{
+            //    Icon = Icon.Accept,
+            //    Title = "Сохранение",
+            //    Html = brigade.BrigadeName + " добавлена"
+            //}).Show();
 
             return RedirectToAction("Index");
         }
 
         public ActionResult SubmitRequest(Request request)
         {
-            request.BrigadeID = request.Brigade.BrigadeID;
-            request.Brigade = null;
+            Brigade brigade = brigadeRepository.Get(request.Brigade?.BrigadeID);
+            request.Brigade = brigade;
             requestRepository.Create(request);
 
             try

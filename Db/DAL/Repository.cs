@@ -27,7 +27,7 @@ namespace GeoSystem.Db.DAO
             if(item != null)
                 GetTable().Remove(item);
         }
-        public T Get(int id)
+        public T Get(int? id)
         {
             return GetTable().Find(id);
         }

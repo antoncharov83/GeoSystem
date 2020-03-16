@@ -1,5 +1,15 @@
 ﻿@model IEnumerable<GeoSystem.Models.Request>
 
+    <script>
+        var brigadeRenderer = function (value) {
+            if (!Ext.isEmpty(value)) {
+                return value.BrigadeName;
+            }
+
+            return value;
+        };
+    </script>
+
 @(Html.X().Store()
             .ID("BrigadeStore")
             .Model(Html.X().Model()
@@ -16,36 +26,78 @@
 
 @(Html.X().GridPanel()
             .ID("GridPanelRequest")
-            .Store(
-                Html.X().StoreForModel().ID("StoreRequest")
+            .Store(Html.X().Store()
+                .Model(Html.X().Model()
+                    .Fields(
+                        new ModelField("ID", ModelFieldType.Int),
+                        new ModelField("RequestName"),
+                        new ModelField("Comment"),
+                        new ModelField("Start", ModelFieldType.Date),
+                        new ModelField("End", ModelFieldType.Date),
+                        new ModelField("IsDone", ModelFieldType.Boolean),
+                        new ModelField()
+                        {
+                            Name = "Brigade",
+                            Type = ModelFieldType.Object
+                        }
+                    )
+                )            
                 .AutoSync(true)
-                    .ShowWarningOnFailure(false)                    
-                    .SyncUrl(Url.Action("RequestHandleChanges"))
+                .ShowWarningOnFailure(true)                    
+                .SyncUrl(Url.Action("RequestHandleChanges"))
+                .DataSource(Model)
             )
             .Icon(Icon.Table)
             .Frame(true)
             .Title("Заявки")
             .Height(430)
-            .Width(500)
+            .Width(700)
             .StyleSpec("margin-top: 10px;")
             .ColumnModel(                
-                Html.X().ColumnFor(Model, m => m.RequestName)
-                    .ToBuilder<Column.Builder>()
-                    .Flex(1)
+                Html.X().Column()
+                    .Text("Номер")
+                    .DataIndex("Id"),
+
+                Html.X().Column()
+                    .Text("Название")
+                    .DataIndex("RequestName")
                     .Editor(
                         Html.X().TextField().AllowBlank(false)
                     ),
 
-                Html.X().ColumnFor(Model, m => m.Start)
-                    .ToBuilder<Column.Builder>()
-                    .Flex(1)
+                Html.X().Column()
+                    .Text("Комментарий")
+                    .DataIndex("Comment")
                     .Editor(
                         Html.X().TextField().AllowBlank(false)
                     ),
 
-                Html.X().ColumnFor(Model, m => m.Brigade.BrigadeName)
-                    .ToBuilder<Column.Builder>()
-                    .Flex(1)
+                Html.X().DateColumn()
+                    .Text("Начало")
+                    .DataIndex("Start")
+                    .Editor(
+                        Html.X().DateField().AllowBlank(false)
+                    ),
+
+                Html.X().DateColumn()
+                    .Text("Конец")
+                    .DataIndex("End")
+                    .Editor(
+                        Html.X().DateField().AllowBlank(false)
+                    ),
+
+                Html.X().BooleanColumn()
+                    .Text("Завершено")
+                    .DataIndex("IsDone")
+                    .Editor(
+                        Html.X().TextField().AllowBlank(false)
+                    ),
+
+                Html.X().Column()
+                    .Text("Бригада")
+                    .DataIndex("Brigade")
+                    .Width(240)
+                    .Renderer("brigadeRenderer")
                     .Editor(
                         Html.X().ComboBox()
                         .QueryMode(DataLoadMode.Remote)

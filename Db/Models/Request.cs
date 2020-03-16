@@ -11,8 +11,8 @@ namespace GeoSystem.Models
     {
         [Field(FieldType = typeof(Ext.Net.Hidden))]
         public int RequestID { get; set; }
-        [Field(FieldType = typeof(Ext.Net.Hidden))]
-        public int BrigadeID { get; set; }
+        //[Field(FieldType = typeof(Ext.Net.Hidden))]
+        //public int BrigadeID { get; set; }
         [Display(Name = "Название")]
         public string RequestName { get; set; }
         [Display(Name = "Комментарий")]
