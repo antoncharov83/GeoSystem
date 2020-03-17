@@ -17,7 +17,7 @@ namespace GeoSystem.Controllers
 
         public ActionResult Index()
         {
-            return View(new Brigade());
+            return View();
         }
         public ActionResult About()
         {

@@ -8,14 +8,29 @@
 
             return value;
         };
+
+        var onStoreException = function (proxy, response, operation) {
+            var error = operation.getError(),
+                        message = Ext.isString(error) ? error : ('(' + error.status + ')' + error.statusText);
+
+            Ext.net.Notification.show({
+                iconCls: 'icon-exclamation',
+                html: message + "\n<br /><b>Proxy type:</b> " + proxy.type,
+                title: 'EXCEPTION',
+                scrollable: 'both',
+                hideDelay: 5000,
+                width: 300,
+                height: 200
+            });
+        };
     </script>
 
 @(Html.X().Store()
             .ID("BrigadeStore")
             .Model(Html.X().Model()
                 .Fields(
-                    new ModelField("id", ModelFieldType.Int) { Mapping = "BrigadeID" },
-                    new ModelField("name", ModelFieldType.String) { Mapping = "BrigadeName" }
+                    new ModelField("brigade", ModelFieldType.Object) { Mapping = "Brigade" },
+                    new ModelField("BrigadeName", ModelFieldType.String) { Mapping = "BrigadeName" }
                 )
             )
             .Proxy(Html.X().AjaxProxy()
@@ -41,9 +56,14 @@
                             Type = ModelFieldType.Object
                         }
                     )
-                )            
+                )
                 .AutoSync(true)
-                .ShowWarningOnFailure(true)                    
+                .ShowWarningOnFailure(true)
+                .Listeners(l =>
+                {
+                    l.Exception.Fn = "onStoreException";
+                    l.Exception.Buffer = 10;
+                })
                 .SyncUrl(Url.Action("RequestHandleChanges"))
                 .DataSource(Model)
             )
@@ -53,7 +73,7 @@
             .Height(430)
             .Width(700)
             .StyleSpec("margin-top: 10px;")
-            .ColumnModel(                
+            .ColumnModel(
                 Html.X().Column()
                     .Text("Номер")
                     .DataIndex("Id"),
@@ -103,8 +123,8 @@
                         .QueryMode(DataLoadMode.Remote)
                         .TriggerAction(TriggerAction.All)
                         .StoreID("BrigadeStore")
-                        .ValueField("id")
-                        .DisplayField("name")
+                        .ValueField("brigade")
+                        .DisplayField("BrigadeName")
                     )
             )
             .Plugins(

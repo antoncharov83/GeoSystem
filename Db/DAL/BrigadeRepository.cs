@@ -18,7 +18,7 @@ namespace GeoSystem.Db.DAO
         {
             return Get(id)?.Requests;
         }
-        protected override DbSet<Brigade> GetTable()
+        public override DbSet<Brigade> GetTable()
         {
             return (GeoSystemContext as GeoSystemContext).brigade;
         }

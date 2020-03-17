@@ -68,6 +68,6 @@ namespace GeoSystem.Db.DAO
             GC.SuppressFinalize(this);
         }
 
-        protected abstract DbSet<T> GetTable();
+        public abstract DbSet<T> GetTable();
     }
 }

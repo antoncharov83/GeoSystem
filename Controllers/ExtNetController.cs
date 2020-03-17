@@ -48,19 +48,43 @@ namespace GeoSystem.Controllers
         [ChildActionOnly]
         public ActionResult ShowAllBrigades()
         {
-            IEnumerable<Brigade> list = brigadeRepository.GetAll();
+            IEnumerable<Brigade> list =
+            //    new List<Brigade>(new Brigade[] { 
+            //    new Brigade() { BrigadeID = 1, BrigadeName = "b1"},
+            //    new Brigade() { BrigadeID = 2, BrigadeName = "b2"}
+            //});
+            brigadeRepository.GetAll();
             return PartialView("BrigadesGrid", list);
         }
         [ChildActionOnly]
         public ActionResult ShowAllRequests()
         {
-            IEnumerable<Request> list = requestRepository.GetAllWithBrigade();
+
+            IEnumerable<Request> list = new List<Request>(new Request[] { 
+                new Request() { RequestID = 1, IsDone = true, RequestName = "r1",
+                    Brigade = new Brigade() { BrigadeID = 1, BrigadeName = "b1"} },
+                new Request() { RequestID = 2, IsDone = true, RequestName = "r2",
+                    Brigade = new Brigade() { BrigadeID = 2, BrigadeName = "b2"}}
+            });
+            //requestRepository.GetAllWithBrigade();
+            
             return PartialView("RequestsGrid", list);
         }
 
         public ActionResult GetBrigades()
         {
-            return this.Store(brigadeRepository.GetAll());
+            //var res = brigadeRepository.GetAll()
+            //    .Select(b => 
+            //       new BrigadeComboBox { BrigadeName = b.BrigadeName, Brigade = b }
+            //    ).ToList();
+
+            IEnumerable<BrigadeComboBox> list =
+                new List<BrigadeComboBox>(new BrigadeComboBox[] {
+                new BrigadeComboBox { BrigadeName = "b1", Brigade = new Brigade() { BrigadeID = 1, BrigadeName = "b1"} },
+                new BrigadeComboBox { BrigadeName = "b2", Brigade = new Brigade() { BrigadeID = 2, BrigadeName = "b2"} }
+            });
+
+            return this.Store(list);
         }
         [ChildActionOnly]
         public ActionResult getStatistics() {

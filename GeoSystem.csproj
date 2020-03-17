@@ -162,6 +162,7 @@
     <Compile Include="Db\DAL\IRequestRepository.cs" />
     <Compile Include="Db\DAL\Repository.cs" />
     <Compile Include="Db\DAL\RequestRepository.cs" />
+    <Compile Include="Db\ViewModel\BrigadeComboBox.cs" />
     <Compile Include="Db\ViewModel\FormPanelRequest.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

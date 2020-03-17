@@ -9,10 +9,9 @@ namespace GeoSystem.Models
 {
     public class Request
     {
-        [Field(FieldType = typeof(Ext.Net.Hidden))]
+        [Field(FieldType = typeof(Ext.Net.Hidden), Ignore = true)]
+        [ModelField(IDProperty = true, UseNull = false)]
         public int RequestID { get; set; }
-        //[Field(FieldType = typeof(Ext.Net.Hidden))]
-        //public int BrigadeID { get; set; }
         [Display(Name = "Название")]
         public string RequestName { get; set; }
         [Display(Name = "Комментарий")]

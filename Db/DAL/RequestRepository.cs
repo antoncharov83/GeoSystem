@@ -20,7 +20,7 @@ namespace GeoSystem.Db.DAO
             return GetTable().Include("Brigade").ToList();
         }
 
-        protected override DbSet<Request> GetTable()
+        public override DbSet<Request> GetTable()
         {
             return (GeoSystemContext as GeoSystemContext).request;
         }
