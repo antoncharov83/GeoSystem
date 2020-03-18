@@ -24,5 +24,13 @@ namespace GeoSystem.Models
         public bool IsDone { get; set; }
         [UIHint("Brigade")]
         public virtual Brigade Brigade { get; set; }
+
+        public void Update(Request request) {
+            RequestName = request.RequestName;
+            Comment = request.Comment;
+            Start = request.Start;
+            End = request.End;
+            IsDone = request.IsDone;
+        }
     }
 }

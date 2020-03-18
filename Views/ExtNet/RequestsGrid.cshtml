@@ -23,6 +23,32 @@
                 height: 200
             });
         };
+
+        var edit = function (editor, e) {
+            /*
+                "e" is an edit event with the following properties:
+
+                    grid - The grid
+                    record - The record that was edited
+                    field - The field name that was edited
+                    value - The value being set
+                    originalValue - The original value for the field, before the edit.
+                    row - The grid table row
+                    column - The grid Column defining the column that was edited.
+                    rowIdx - The row index that was edited
+                    colIdx - The column index that was edited
+            */
+            if (!(e.value === e.originalValue || (Ext.isDate(e.value) && Ext.Date.isEqual(e.value, e.originalValue)))) {
+                Ext.net.DirectMethod.request({
+                    url: '@(Url.Action("EditRequest"))',
+                    params: {
+                        id: e.record.data.RequestID,
+                        newValue: e.value,
+                        customer: e.record.data
+                    }
+                });
+            }
+        };
     </script>
 
 @(Html.X().Store()
@@ -41,10 +67,10 @@
 
 @(Html.X().GridPanel()
             .ID("GridPanelRequest")
-            .Store(Html.X().Store()
-                .Model(Html.X().Model()
+            .Store(Html.X().Store().ID("RequestStore")
+                .Model(Html.X().Model().IDProperty("RequestID")
                     .Fields(
-                        new ModelField("ID", ModelFieldType.Int),
+                        //new ModelField("ID", ModelFieldType.Int),
                         new ModelField("RequestName"),
                         new ModelField("Comment"),
                         new ModelField("Start", ModelFieldType.Date),
@@ -57,14 +83,14 @@
                         }
                     )
                 )
-                .AutoSync(true)
-                .ShowWarningOnFailure(true)
-                .Listeners(l =>
-                {
-                    l.Exception.Fn = "onStoreException";
-                    l.Exception.Buffer = 10;
-                })
-                .SyncUrl(Url.Action("RequestHandleChanges"))
+                //.AutoSync(true)
+                //.ShowWarningOnFailure(true)
+                //.Listeners(l =>
+                //{
+                //    l.Exception.Fn = "onStoreException";
+                //    l.Exception.Buffer = 10;
+                //})
+                //.SyncUrl(Url.Action("RequestHandleChanges"))
                 .DataSource(Model)
             )
             .Icon(Icon.Table)
@@ -74,9 +100,9 @@
             .Width(700)
             .StyleSpec("margin-top: 10px;")
             .ColumnModel(
-                Html.X().Column()
-                    .Text("Номер")
-                    .DataIndex("Id"),
+                //Html.X().Column()
+                //    .Text("Номер")
+                //    .DataIndex("ID"),
 
                 Html.X().Column()
                     .Text("Название")
@@ -103,15 +129,13 @@
                     .Text("Конец")
                     .DataIndex("End")
                     .Editor(
-                        Html.X().DateField().AllowBlank(false)
+                        Html.X().TextField()
                     ),
 
-                Html.X().BooleanColumn()
+                Html.X().CheckColumn()
                     .Text("Завершено")
                     .DataIndex("IsDone")
-                    .Editor(
-                        Html.X().TextField().AllowBlank(false)
-                    ),
+                    .Editable(true),
 
                 Html.X().Column()
                     .Text("Бригада")
@@ -127,7 +151,11 @@
                         .DisplayField("BrigadeName")
                     )
             )
+            .SelectionModel(Html.X().CellSelectionModel())
             .Plugins(
-                Html.X().CellEditing()
+                Html.X().CellEditing().Listeners(ls => ls.Edit.Fn = "edit")
             )
+//.Plugins(
+//    Html.X().CellEditing()
+//)
 )

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using Ext.Net;
 using Ext.Net.MVC;
 using GeoSystem.Db.DAL;
@@ -56,33 +57,45 @@ namespace GeoSystem.Controllers
             brigadeRepository.GetAll();
             return PartialView("BrigadesGrid", list);
         }
+
+        public ActionResult GridAutoSync() => View(AllRequests); // use the partial view as view
+
+        public static IEnumerable<Request> AllRequests = new List<Request>(new Request[] {
+        new Request() { RequestID = 1, IsDone = true, RequestName = "r1",
+            Brigade = new Brigade() { BrigadeID = 1, BrigadeName = "b1"}
+        },
+        new Request() { RequestID = 2, IsDone = true, RequestName = "r2",
+            Brigade = new Brigade() { BrigadeID = 2, BrigadeName = "b2"}}
+        });
+
         [ChildActionOnly]
         public ActionResult ShowAllRequests()
         {
 
-            IEnumerable<Request> list = new List<Request>(new Request[] { 
-                new Request() { RequestID = 1, IsDone = true, RequestName = "r1",
-                    Brigade = new Brigade() { BrigadeID = 1, BrigadeName = "b1"} },
-                new Request() { RequestID = 2, IsDone = true, RequestName = "r2",
-                    Brigade = new Brigade() { BrigadeID = 2, BrigadeName = "b2"}}
-            });
-            //requestRepository.GetAllWithBrigade();
-            
+            IEnumerable<Request> list =
+            //    new List<Request>(new Request[] { 
+            //    new Request() { RequestID = 1, IsDone = true, RequestName = "r1",
+            //        Brigade = new Brigade() { BrigadeID = 1, BrigadeName = "b1"} },
+            //    new Request() { RequestID = 2, IsDone = true, RequestName = "r2",
+            //        Brigade = new Brigade() { BrigadeID = 2, BrigadeName = "b2"}}
+            //});
+            requestRepository.GetAllWithBrigade();
+
             return PartialView("RequestsGrid", list);
         }
 
         public ActionResult GetBrigades()
         {
-            //var res = brigadeRepository.GetAll()
-            //    .Select(b => 
-            //       new BrigadeComboBox { BrigadeName = b.BrigadeName, Brigade = b }
-            //    ).ToList();
+            var list = brigadeRepository.GetAll()
+                .Select(b =>
+                   new BrigadeComboBox { BrigadeName = b.BrigadeName, Brigade = b }
+                ).ToList();
 
-            IEnumerable<BrigadeComboBox> list =
-                new List<BrigadeComboBox>(new BrigadeComboBox[] {
-                new BrigadeComboBox { BrigadeName = "b1", Brigade = new Brigade() { BrigadeID = 1, BrigadeName = "b1"} },
-                new BrigadeComboBox { BrigadeName = "b2", Brigade = new Brigade() { BrigadeID = 2, BrigadeName = "b2"} }
-            });
+            //IEnumerable<BrigadeComboBox> list =
+            //    new List<BrigadeComboBox>(new BrigadeComboBox[] {
+            //    new BrigadeComboBox { BrigadeName = "b1", Brigade = new Brigade() { BrigadeID = 1, BrigadeName = "b1"} },
+            //    new BrigadeComboBox { BrigadeName = "b2", Brigade = new Brigade() { BrigadeID = 2, BrigadeName = "b2"} }
+            //});
 
             return this.Store(list);
         }
@@ -130,14 +143,55 @@ namespace GeoSystem.Controllers
             return handler.Action == StoreAction.Update ? (ActionResult)this.Store(items) : (ActionResult)this.Content(""); ;
         }
 
+        public DirectResult EditRequest(int id, string newValue, object customer)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            Request request = serializer.Deserialize<Request>((customer as string[])[0]);
+            Brigade brigade = brigadeRepository.Get(request.Brigade.BrigadeID);
+            Request requestToSave = requestRepository.Get(id);
+            requestToSave.Update(request);
+            requestToSave.Brigade = brigade;
+            requestRepository.Update(requestToSave);
+            try
+            {
+                requestRepository.Save();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                string msg = "Errors";
+                foreach (DbEntityValidationResult validationError in ex.EntityValidationErrors)
+                {
+                    msg = validationError.Entry.Entity.ToString() + "\n";
+                    foreach (DbValidationError err in validationError.ValidationErrors)
+                    {
+                        msg += err.ErrorMessage + "\n";
+                    }
+                }
+
+                X.Msg.Notify(new NotificationConfig
+                {
+                    Icon = Icon.Accept,
+                    Title = "Œ¯Ë·Í‡!",
+                    Html = msg
+                }).Show();
+
+                return this.Direct();
+            }
+            
+            X.GetCmp<Store>("RequestStore").GetById(id).Commit();
+
+            return this.Direct();
+        }
+
         public ActionResult RequestHandleChanges(StoreDataHandler handler)
         {
+            String data = handler.JsonData;
             List<Request> requests = handler.ObjectData<Request>();
             string errorMessage = null;
 
             if (handler.Action == StoreAction.Update)
             {
-                requests.ForEach(r => 
+                requests?.ForEach(r => 
                 {
                     requestRepository.Update(r);
                 });
